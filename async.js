@@ -3,6 +3,8 @@ const promiseResult = document.querySelector('.promise-result');
 
 button.addEventListener('click', () => {
 
+    promiseResult.innerHTML = "";
+
     let countdownTime = 5;
 
     // Create a paragraph element for displaying the countdown
