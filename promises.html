@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Promise Exercises</title>
+        <meta name="description"
+            content="Promise Programming Exercises">
+        <meta name="keywords" content="Promise">
+        <meta name="author" content="Flemingstar">
+        <link rel="stylesheet" href="./style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Roboto:wght@400;500;700;900&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+            integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+    </head>
+    <body>
+        
+        <main class="main">
+            <button id="submit-btn">Fetch Posts using promise</button>
+            <div class="promise-result">
+
+            </div>
+        </main>
+        <script>
+        const button = document.getElementById('submit-btn');
+        const promiseResult = document.querySelector('.promise-result');
+        
+        
+        button.addEventListener('click', () => {
+
+            promiseResult.innerHTML = "";
+
+            const createTitle = document.createElement('h2');
+            createTitle.classList.add("post-title");
+            promiseResult.appendChild(createTitle);
+            // loading
+            createTitle.textContent = 'Loading...';
+
+            // Fetch data with a Promise
+            fetchDataWithTimeout(5000)
+                .then(data => {
+                // Clear the loading message
+                promiseResult.innerHTML = '';
+
+                // Loop through all posts and create elements for each
+                data.forEach(post => {
+                    const postContainer = document.createElement('div');
+                    postContainer.classList.add('post-container');
+
+                    const postTitle = document.createElement('h2');
+                    postTitle.classList.add('post-title');
+                    postTitle.textContent = post.title;
+
+                    const likeSection = document.createElement('div');
+                    likeSection.classList.add('like-section');
+
+                    const likeCount = document.createElement('span');
+                    likeCount.classList.add('like-count');
+                    likeCount.textContent = `Likes: ${post.reactions.likes}`;
+
+                    const likeIcon = document.createElement('span');
+                    likeIcon.classList.add('like-icon');
+                    likeIcon.textContent = '❤️';
+
+                    likeSection.appendChild(likeCount);
+                    likeSection.appendChild(likeIcon);
+
+                    postContainer.appendChild(postTitle);
+                    postContainer.appendChild(likeSection);
+
+                    promiseResult.appendChild(postContainer);
+                });
+            })
+            .catch(error => {
+                // Handle errors
+                promiseResult.innerHTML = `<p>${error}</p>`;
+            });
+        });
+
+        function fetchDataWithTimeout(timeout) {
+            return Promise.race([
+                fetchDataFromAPI(),
+                new Promise((_, reject) =>
+                    setTimeout(() => reject('Operation timed out'), timeout)
+                )
+            ]);
+        }
+
+        function fetchDataFromAPI() {
+            return fetch('https://dummyjson.com/posts') // fetch here return a promise
+                .then(response => response.json())
+                .then(data => data.posts)
+                .catch(error => {
+                    throw error;
+                });
+        }
+    </script>
+    </body>
+</html>
